@@ -1,7 +1,12 @@
 const timeout = (timeoutMs: number): Promise<void> => {
-    const result = Promise.withResolvers<void>();
-    setTimeout(result.resolve, timeoutMs);
-    return result.promise;
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, timeoutMs);
+    });
+    // const result = Promise.withResolvers<void>();
+    // setTimeout(() => result.resolve(), timeoutMs);
+    // return result.promise;
 };
 
 const main = async (): Promise<void> => {
