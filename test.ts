@@ -14,3 +14,19 @@ const main = async (): Promise<void> => {
 
     console.info('Koniec testu');
 };
+
+main()
+    .then(() => {
+        console.info('gotowe ...');
+    })
+    .catch((error) => {
+        console.error('error', error);
+    });
+
+/*
+
+npx github:piuccio/cowsay JavaScript FTW!
+https://dev.to/ipreda/run-your-npx-script-directly-from-github-create-your-own-cli-commands-and-other-stories-4pn3
+https://github.com/piuccio/cowsay
+
+*/
