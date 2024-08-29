@@ -1,12 +1,14 @@
 import { bbb } from "src/bbb.ts";
 import { message } from "./aaa.ts";
 
-// @deno-types="npm:@types/express@4.17.15"
-import express from "npm:express@4.18.2";
+// @deno-types="npm:@types/express@4"
+import express, { Request, Response } from "npm:express@4.18.2";
+// import { Request, Response } from 'npm:@types/express@4.17.17';
 
 const app = express();
 
-app.get("/", function (_req, res) {
+app.get("/", function (_req: Request, res: Response) {
+    // _req.url
     res.send(message("hello") + bbb());
 });
 
