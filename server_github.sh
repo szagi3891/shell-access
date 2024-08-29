@@ -1,1 +1,1 @@
-deno run --allow-read --allow-env --allow-net https://raw.githubusercontent.com/szagi3891/shell-access/main/server.ts
+deno run --allow-read --allow-env --allow-net --import-map=./import_map.json https://raw.githubusercontent.com/szagi3891/shell-access/main/server.ts
