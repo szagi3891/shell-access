@@ -1,8 +1,6 @@
 {
   "imports": {
     "@reactive/utils": "jsr:@reactive/utils@^0.5.31",
-    "@types/cli-color": "npm:@types/cli-color@^2.0.6",
-    "clc": "npm:clc@^1.0.2",
-    "cli-color": "npm:cli-color@^2.0.4"
+    "@types/cli-color": "npm:@types/cli-color@^2.0.6"
   }
 }

@@ -1,6 +1,8 @@
 import { timeout } from "@reactive/utils/";
 // import clc from 'clc';//TODO - sprawdzić, czemu TS tego nie łapie
-import clc from 'cli-color';
+// import clc from 'cli-color';
+// "clc": "npm:clc@^1.0.2",
+// "cli-color": "npm:cli-color@^2.0.4"
 
 //deno run ./src/task.ts sync-git
 
@@ -12,18 +14,30 @@ await timeout(1000);
 console.info('czekam sekundę 2');
 
 // const show = async (rrr: Deno.CommandOutput): Promise<void> => {
-
 // };
 
 const execCommand = async (command: string, args: Array<string>): Promise<void> => {
+    console.info('COMMAND', JSON.stringify([command, ...args], 4));
+
     const out = new Deno.Command(command, {
         args,
     });
     const { code, stdout, stderr } = await out.output();
 
-    console.info('code', code);
-    console.info('stdout', new TextDecoder().decode(stdout));
-    console.info('stderr', new TextDecoder().decode(stderr));
+    const textErr = new TextDecoder().decode(stderr);
+    const textOut = new TextDecoder().decode(stdout);
+
+    if (textErr.length > 0) {
+        console.log(`%c${textErr}`, 'color: red;');
+    }
+
+    if (textOut.length > 0) {
+        console.log(textOut);
+    }
+
+    // console.info('code', code);
+    // console.info('stdout', new TextDecoder().decode(stdout));
+    // console.info('stderr', new TextDecoder().decode(stderr));
 
     if (code !== 0) {
         throw Error('Oczekiwano kodiu odpowiedzi 0');
@@ -32,11 +46,11 @@ const execCommand = async (command: string, args: Array<string>): Promise<void> 
 
 if (args[0] === 'push') {
     // console.info(clc.red('push')); //TODO - sprawdzić, czemu TS tego nie łapie
-    console.info(clc.red('push'));
-    console.log("%cHello World 1", "color: red");
-    console.log("%cHello World 2", "font-weight: bold; font-size: 20px;");
-    console.log("%cHello World 3", "color: #FFC0CB");
-    console.log("%cHello World 4", "color: rgb(255, 192, 203)");
+    // console.info(clc.red('push'));
+    // console.log("%cHello World 1", "color: red");
+    // console.log("%cHello World 2", "font-weight: bold; font-size: 20px;");
+    // console.log("%cHello World 3", "color: #FFC0CB");
+    // console.log("%cHello World 4", "color: rgb(255, 192, 203)");
 
     await execCommand('git', ['add', '.']);
     await execCommand('git', ['commit', '-am', 'auto save']);
