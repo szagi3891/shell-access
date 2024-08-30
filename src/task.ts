@@ -33,6 +33,8 @@ const execCommand = async (command: string, args: Array<string>): Promise<void> 
 if (args[0] === 'push') {
     // console.info(clc.red('push')); //TODO - sprawdzić, czemu TS tego nie łapie
     console.info(clc.red('push'));
+    console.log("%cHello World", "color: red");
+    console.log("%cHello World", "font-weight: bold; font-size: 20px;");
 
     await execCommand('git', ['add', '.']);
     await execCommand('git', ['commit', '-am', 'auto save']);
