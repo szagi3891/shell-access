@@ -35,6 +35,8 @@ if (args[0] === 'push') {
     console.info(clc.red('push'));
     console.log("%cHello World 1", "color: red");
     console.log("%cHello World 2", "font-weight: bold; font-size: 20px;");
+    console.log("%cHello World 3", "color: #FFC0CB");
+    console.log("%cHello World 4", "color: rgb(255, 192, 203)");
 
     await execCommand('git', ['add', '.']);
     await execCommand('git', ['commit', '-am', 'auto save']);
