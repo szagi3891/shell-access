@@ -2,10 +2,22 @@
   "version": "3",
   "packages": {
     "specifiers": {
+      "jsr:@reactive/utils@^0.5.31": "jsr:@reactive/utils@0.5.31",
       "npm:@types/express@4": "npm:@types/express@4.17.17",
       "npm:@types/express@4.17.17": "npm:@types/express@4.17.17",
       "npm:@types/node": "npm:@types/node@18.16.19",
-      "npm:express@4.18.2": "npm:express@4.18.2"
+      "npm:express@4.18.2": "npm:express@4.18.2",
+      "npm:mobx@^*": "npm:mobx@6.12.3",
+      "npm:react@^*": "npm:react@18.3.1"
+    },
+    "jsr": {
+      "@reactive/utils@0.5.31": {
+        "integrity": "bdf9b61bdb987e6a5dd87ab7c0912b8301ae6f5066711d1e789bbb25aec0e61e",
+        "dependencies": [
+          "npm:mobx@^*",
+          "npm:react@^*"
+        ]
+      }
     },
     "npm": {
       "@types/body-parser@1.19.5": {
@@ -302,6 +314,16 @@
         "integrity": "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==",
         "dependencies": {}
       },
+      "js-tokens@4.0.0": {
+        "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==",
+        "dependencies": {}
+      },
+      "loose-envify@1.4.0": {
+        "integrity": "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==",
+        "dependencies": {
+          "js-tokens": "js-tokens@4.0.0"
+        }
+      },
       "media-typer@0.3.0": {
         "integrity": "sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==",
         "dependencies": {}
@@ -326,6 +348,10 @@
       },
       "mime@1.6.0": {
         "integrity": "sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==",
+        "dependencies": {}
+      },
+      "mobx@6.12.3": {
+        "integrity": "sha512-c8NKkO4R2lShkSXZ2Ongj1ycjugjzFFo/UswHBnS62y07DMcTc9Rvo03/3nRyszIvwPNljlkd4S828zIBv/piw==",
         "dependencies": {}
       },
       "ms@2.0.0": {
@@ -382,6 +408,12 @@
           "http-errors": "http-errors@2.0.0",
           "iconv-lite": "iconv-lite@0.4.24",
           "unpipe": "unpipe@1.0.0"
+        }
+      },
+      "react@18.3.1": {
+        "integrity": "sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==",
+        "dependencies": {
+          "loose-envify": "loose-envify@1.4.0"
         }
       },
       "safe-buffer@5.2.1": {
@@ -472,5 +504,10 @@
       }
     }
   },
-  "remote": {}
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@reactive/utils@^0.5.31"
+    ]
+  }
 }

@@ -1,3 +1,5 @@
 {
-    "importMap": "./import_map.json"
+  "imports": {
+    "@reactive/utils": "jsr:@reactive/utils@^0.5.31"
+  }
 }

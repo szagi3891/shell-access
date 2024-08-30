@@ -1,0 +1,1 @@
+deno run --allow-env ./src/task.ts push 
