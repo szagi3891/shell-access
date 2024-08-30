@@ -22,25 +22,21 @@ const execCommand = async (command: string, args: Array<string>): Promise<void> 
     console.info('code', code);
     console.info('stdout', new TextDecoder().decode(stdout));
     console.info('stderr', new TextDecoder().decode(stderr));
+
+    if (code !== 0) {
+        throw Error('Oczekiwano kodiu odpowiedzi 0');
+    }
 };
 
 if (args[0] === 'push') {
     console.info('push');
 
-    await execCommand('echo', ['aaaa', 'bbbb']);
-    // const command = new Deno.Command('echo', {
-    //     args: [
-    //       "eval",
-    //       "console.log('hello'); console.error('world')",
-    //     ],
-    //   });
-    // const { code, stdout, stderr } = await command.output();
+    // await execCommand('echo', ['aaaa', 'bbbb']);
+    // await execCommand('git', ['branch']);
 
-    // console.info('code', code);
-    // console.info('stdout', new TextDecoder().decode(stdout));
-    // console.info('stderr', new TextDecoder().decode(stderr));
-
-    await execCommand('git', ['branch']);
+    await execCommand('git', ['add', '.']);
+    await execCommand('git', ['commit', '-am', 'auto save']);
+    await execCommand('git', ['push', 'origin']);
 
     // const rrr = await (new Deno.Command('git', {
     //     args: [ 'branch' ]
@@ -63,6 +59,7 @@ if (args[0] === 'push') {
 
     //commit, wypchnij
     //return;
+    console.info('wypchnięte');
 }
 
 if (args[0] === 'sync-git') {
