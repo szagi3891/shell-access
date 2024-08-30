@@ -1,4 +1,6 @@
 import { timeout } from "@reactive/utils/";
+// import clc from 'clc';//TODO - sprawdzić, czemu TS tego nie łapie
+import clc from 'cli-color';
 
 //deno run ./src/task.ts sync-git
 
@@ -29,14 +31,15 @@ const execCommand = async (command: string, args: Array<string>): Promise<void> 
 };
 
 if (args[0] === 'push') {
-    console.info('push');
-
-    // await execCommand('echo', ['aaaa', 'bbbb']);
-    // await execCommand('git', ['branch']);
+    // console.info(clc.red('push')); //TODO - sprawdzić, czemu TS tego nie łapie
+    console.info(clc.red('push'));
 
     await execCommand('git', ['add', '.']);
     await execCommand('git', ['commit', '-am', 'auto save']);
     await execCommand('git', ['push', 'origin']);
+
+    // await execCommand('echo', ['aaaa', 'bbbb']);
+    // await execCommand('git', ['branch']);
 
     // const rrr = await (new Deno.Command('git', {
     //     args: [ 'branch' ]
@@ -73,4 +76,6 @@ if (args[0] === 'sync-git') {
 
 
 //TODO - opcja, poszukiwania zaginionego this-a (albo raczej odczepionego)
+
+//TODO - zablokuj dns-a ???
 

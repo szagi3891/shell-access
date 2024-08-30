@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
         // "target": "es5",
         // "module": "commonjs",
         "strict": true,
@@ -15,7 +17,6 @@
         "forceConsistentCasingInFileNames": true,
         "baseUrl": ".",
         "noEmit": true,
-        "skipLibCheck": true,
         "allowImportingTsExtensions": true
     }
 }

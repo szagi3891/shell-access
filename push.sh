@@ -1,1 +1,1 @@
-deno run --allow-env --allow-run ./src/task.ts push 
+deno run --allow-env --allow-run --allow-read ./src/task.ts push 
