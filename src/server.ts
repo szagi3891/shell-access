@@ -5,6 +5,9 @@ import { message } from "./aaa.ts";
 import express, { Request, Response } from "npm:express@4.18.2";
 // import { Request, Response } from 'npm:@types/express@4.17.17';
 
+const args = Deno.args;
+console.info('args', args);
+
 const app = express();
 
 app.get("/", function (_req: Request, res: Response) {
@@ -15,4 +18,6 @@ app.get("/", function (_req: Request, res: Response) {
 app.listen(3000, () => {
     console.log("Express listening on :3000");
 });
+
+
 
