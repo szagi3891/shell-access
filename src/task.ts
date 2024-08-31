@@ -1,6 +1,7 @@
-import { timeout } from "@reactive/utils/";
-import { execCommand } from "./lib/command.ts";
+// import { timeout } from "@reactive/utils/";
+// import { execCommand } from "./lib/command.ts";
 import { taskPush } from "./task/push.ts";
+import { syncAllProjectGit } from "./task/syncAllProjectGit.ts";
 // import clc from 'clc';//TODO - sprawdzić, czemu TS tego nie łapie
 // import clc from 'cli-color';
 // "clc": "npm:clc@^1.0.2",
@@ -11,18 +12,29 @@ import { taskPush } from "./task/push.ts";
 const args = Deno.args;
 console.info('args', args);
 
-console.info('czekam sekundę 1');
-await timeout(1000);
-console.info('czekam sekundę 2');
+// console.info('czekam sekundę 1');
+// await timeout(1000);
+// console.info('czekam sekundę 2');
 
-if (args[0] === 'push') {
-    await taskPush();
-}
+const map: Record<string, () => Promise<void>> = {
+    'push': taskPush,
+    'sync-all-project-git': syncAllProjectGit,
+};
 
-if (args[0] === 'sync-git') {
+const [command, ...commandArg] = args;
 
-    //katalog z repozytoriami git, sprawdza
-}
+const task = map[command];
+
+task();
+
+// if (args[0] === 'push') {
+//     await taskPush();
+//     return;
+// }
+
+// if (args[0] === 'sync-git') {
+//     //katalog z repozytoriami git, sprawdza
+// }
 
 
 //TODO - spakowanie zawartości repozytorium git (bez historii i wrzucenie do pliku zip)

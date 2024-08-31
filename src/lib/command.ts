@@ -1,6 +1,6 @@
 
 export const execCommand = async (command: string, args: Array<string>): Promise<void> => {
-    console.info('COMMAND', JSON.stringify([command, ...args], 4));
+    console.info('COMMAND', JSON.stringify([command, ...args], null, 4));
 
     const out = new Deno.Command(command, {
         args,

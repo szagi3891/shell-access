@@ -17,6 +17,8 @@
         "forceConsistentCasingInFileNames": true,
         "baseUrl": ".",
         "noEmit": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+        "noPropertyAccessFromIndexSignature": true,
+
     }
 }
