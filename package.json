@@ -1,4 +1,6 @@
 {
-    "bin": "./shell.mjs"
+    "bin": {
+        "shell-access": "./shell.mjs"
+    }
 }
 
