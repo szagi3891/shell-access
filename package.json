@@ -1,9 +1,0 @@
-{
-    "name": "my-cli-tool",
-    "version": "1.0.0",
-    "description": "Example CLI tool",
-    "bin": {
-        "shell-access": "./shell.mjs"
-    }
-}
-

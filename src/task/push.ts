@@ -1,4 +1,4 @@
-import { execCommand } from "../lib/command.ts";
+import { commandExec } from "../lib/command.ts";
 
 export const taskPush = async (): Promise<void> => {
 
@@ -9,9 +9,9 @@ export const taskPush = async (): Promise<void> => {
     // console.log("%cHello World 3", "color: #FFC0CB");
     // console.log("%cHello World 4", "color: rgb(255, 192, 203)");
 
-    await execCommand('git', ['add', '.']);
-    await execCommand('git', ['commit', '-am', 'auto save']);
-    await execCommand('git', ['push', 'origin']);
+    await commandExec('git', ['add', '.']);
+    await commandExec('git', ['commit', '-am', 'auto save']);
+    await commandExec('git', ['push', 'origin']);
 
     // await execCommand('echo', ['aaaa', 'bbbb']);
     // await execCommand('git', ['branch']);

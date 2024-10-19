@@ -1,6 +1,9 @@
 {
   "imports": {
-    "@reactive/utils": "jsr:@reactive/utils@^0.5.31",
-    "@types/cli-color": "npm:@types/cli-color@^2.0.6"
+    "@reactive/utils": "jsr:@reactive/utils@^0.5.89"
+  },
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true
   }
 }

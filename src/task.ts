@@ -1,40 +1,26 @@
-// import { timeout } from "@reactive/utils/";
-// import { execCommand } from "./lib/command.ts";
 import { taskPush } from "./task/push.ts";
 import { syncAllProjectGit } from "./task/syncAllProjectGit.ts";
-// import clc from 'clc';//TODO - sprawdzić, czemu TS tego nie łapie
-// import clc from 'cli-color';
-// "clc": "npm:clc@^1.0.2",
-// "cli-color": "npm:cli-color@^2.0.4"
-
-//deno run ./src/task.ts sync-git
 
 const args = Deno.args;
 console.info('args', args);
-
-// console.info('czekam sekundę 1');
-// await timeout(1000);
-// console.info('czekam sekundę 2');
 
 const map: Record<string, () => Promise<void>> = {
     'push': taskPush,
     'sync-all-project-git': syncAllProjectGit,
 };
 
-const [command, ...commandArg] = args;
+// const [command, ...commandArg] = args;
+const command = Deno.args[0] ?? '';
 
 const task = map[command];
 
+if (task === undefined) {
+    console.info(`%cNie zdefiniowano taska o nazwie: "${command}"`, 'color: red; font-weight: bold');
+    Deno.exit(1);
+}
+
 task();
 
-// if (args[0] === 'push') {
-//     await taskPush();
-//     return;
-// }
-
-// if (args[0] === 'sync-git') {
-//     //katalog z repozytoriami git, sprawdza
-// }
 
 
 //TODO - spakowanie zawartości repozytorium git (bez historii i wrzucenie do pliku zip)
