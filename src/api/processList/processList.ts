@@ -1,6 +1,7 @@
 import { throwError } from "@reactive/utils";
-import { commandOut } from "./lib/command.ts";
-import { PsOutput } from "./lib/psOutput.ts";
+import { commandOut } from "../../lib/command.ts";
+import { PsOutput } from "./psOutput.ts";
+import { z } from 'zod';
 
 const execPs = async (params: string): Promise<PsOutput> => {
     const list = await commandOut('ps', ['-eo', params]); //args,
@@ -96,14 +97,21 @@ export const processListV1 = async (): Promise<Map<string, PidRecordTypeV1>> => 
     return resultOut;
 };
 
+export const PidRecordZod = z.object({
+    ppid: z.string(),
+    mem: z.string(),
+    cpu: z.string(),
+    args: z.string(),
+});
 
+type PidRecordType = z.TypeOf<typeof PidRecordZod>;
+// interface PidRecordType {
+//     ppid: string,
+//     mem: string,
+//     cpu: string,
+//     args: string,
+// }
 
-interface PidRecordType {
-    ppid: string,
-    mem: string,
-    cpu: string,
-    args: string,
-}
 export const processList = async (): Promise<Map<string, PidRecordType>> => {
     const output = await execPs('pid,ppid,%mem,%cpu,args');
 

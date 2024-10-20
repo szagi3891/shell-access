@@ -1,16 +1,12 @@
 {
-    "imports": {
-        "@reactive/utils": "jsr:@reactive/utils@^0.5.89",
-        "react-npm": "npm:react@^18.3.1",
-        "react-dom-npm": "npm:react-dom@^18.3.1",
-        "react": "https://esm.sh/react@18.3.1",
-        "react-dom": "https://esm.sh/react-dom@18.3.1"
-    },
-    "compilerOptions": {
-        "lib": ["esnext", "dom", "deno.ns"],
-        "noUncheckedIndexedAccess": true,
-        "noPropertyAccessFromIndexSignature": true
-    },
-    "tasks": {
-    }
+  "imports": {
+    "@reactive/utils": "jsr:@reactive/utils@^0.5.89",
+    "zod": "npm:zod@^3.23.8"
+  },
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true
+  },
+  "tasks": {
+  }
 }
