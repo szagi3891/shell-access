@@ -1,10 +1,21 @@
 {
-    "imports": {
-        "@reactive/utils": "jsr:@reactive/utils@^0.5.89"
-    },
-    "compilerOptions": {
-        "noUncheckedIndexedAccess": true,
-        "noPropertyAccessFromIndexSignature": true
-    },
-    "task": "deno run -A https://deno.land/x/packup@v0.0.13/cli.ts build ./src/client/index.html"
+  "imports": {
+    "@reactive/utils": "jsr:@reactive/utils@^0.5.89",
+    "react-npm": "npm:react@^18.3.1",
+    "react-dom-npm": "npm:react-dom@^18.3.1",
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1"
+  },
+  "compilerOptions": {
+    "lib": ["esnext", "dom"],
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true
+  },
+  "tasks": {
+    "check": "deno check ./src/client/index.tsx",
+    "build-client": "rm -Rf ./dist && deno run -A https://deno.land/x/packup@v0.2.6/cli.ts build --import-map=./deno.json ./src/client/index.html --dist-dir=./dist",
+    "build": "deno task check && deno task build-client",
+    "serve": "deno run -A https://deno.land/x/packup@v0.2.6/cli.ts serve --import-map=./deno.json ./src/client/index.html",
+    "serve-dist": "deno run --allow-net --allow-read https://deno.land/std@0.201.0/http/file_server.ts dist"
+  }
 }
