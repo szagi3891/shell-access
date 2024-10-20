@@ -7,7 +7,7 @@ const execPs = async (params: string): Promise<PsOutput> => {
     return PsOutput.fromString(list);
 }
 
-interface PartialPidRecordType {
+interface PartialPidRecordTypeV1 {
     ppid?: string,
     mem?: string,
     cpu?: string,
@@ -15,7 +15,7 @@ interface PartialPidRecordType {
     comm?: string,
 }
 
-interface PidRecordType {
+interface PidRecordTypeV1 {
     ppid: string,
     mem: string,
     cpu: string,
@@ -23,7 +23,7 @@ interface PidRecordType {
     comm: string,
 }
 
-const getOrCreate = (map: Map<string, PartialPidRecordType>, key: string): PartialPidRecordType => {
+const getOrCreate = (map: Map<string, PartialPidRecordTypeV1>, key: string): PartialPidRecordTypeV1 => {
     const record = map.get(key);
 
     if (record !== undefined) {
@@ -35,7 +35,7 @@ const getOrCreate = (map: Map<string, PartialPidRecordType>, key: string): Parti
     return newRecord;
 };
 
-export const processList = async (): Promise<Map<string, PidRecordType>> => {
+export const processListV1 = async (): Promise<Map<string, PidRecordTypeV1>> => {
     const [output1, output2, output3] = await Promise.all([
         execPs('pid,ppid,%mem,%cpu'),
         execPs('pid,args'),
@@ -53,7 +53,7 @@ export const processList = async (): Promise<Map<string, PidRecordType>> => {
     const output3Pid = output3.get().getLinesAndTrim();
     const output3Comm = output3.getLinesAndTrim();
 
-    const result: Map<string, PartialPidRecordType> = new Map();
+    const result: Map<string, PartialPidRecordTypeV1> = new Map();
 
     for (const [index, pidId] of pid.entries()) {
         const resultRecord = getOrCreate(result, pidId);
@@ -75,11 +75,11 @@ export const processList = async (): Promise<Map<string, PidRecordType>> => {
         resultRecord.comm = output3Comm[index] ?? throwError('oczekiwano wartości');
     }
     
-    const resultOut: Map<string, PidRecordType> = new Map();
+    const resultOut: Map<string, PidRecordTypeV1> = new Map();
 
     for (const [key, value] of result) {
         if (value.ppid !== undefined && value.mem !== undefined && value.cpu !== undefined && value.args !== undefined && value.comm !== undefined) {
-            const record: PidRecordType= {
+            const record: PidRecordTypeV1= {
                 ppid: value.ppid,
                 mem: value.mem,
                 cpu: value.cpu,
@@ -94,4 +94,35 @@ export const processList = async (): Promise<Map<string, PidRecordType>> => {
     }
 
     return resultOut;
+};
+
+
+
+interface PidRecordType {
+    ppid: string,
+    mem: string,
+    cpu: string,
+    args: string,
+}
+export const processList = async (): Promise<Map<string, PidRecordType>> => {
+    const output = await execPs('pid,ppid,%mem,%cpu,args');
+
+    const pid = output.get().getLinesAndTrim();
+    const ppid = output.get().getLinesAndTrim();
+    const mem = output.get().getLinesAndTrim();
+    const cpu = output.getLinesAndTrim();
+    const args = output.getLinesAndTrim();
+
+    const result: Map<string, PidRecordType> = new Map();
+
+    for (const [index, pidId] of pid.entries()) {
+        const resultRecord = getOrCreate(result, pidId);
+
+        resultRecord.ppid = ppid[index] ?? throwError('oczekiwano wartości');
+        resultRecord.mem = mem[index] ?? throwError('oczekiwano wartości');
+        resultRecord.cpu = cpu[index] ?? throwError('oczekiwano wartości');
+        resultRecord.args = args[index] ?? throwError('oczekiwano wartości');
+    }
+
+    return result;
 };
