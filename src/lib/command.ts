@@ -5,6 +5,7 @@ export const commandOut = async (command: string, args: Array<string>): Promise<
     const out = new Deno.Command(command, {
         args,
     });
+
     const { code, stdout, stderr } = await out.output();
 
     if (code !== 0) {
