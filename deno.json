@@ -7,7 +7,7 @@
     "react-dom": "https://esm.sh/react-dom@18.3.1"
   },
   "compilerOptions": {
-    "lib": ["esnext", "dom"],
+    "lib": ["esnext", "dom", "deno.ns"],
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true
   },

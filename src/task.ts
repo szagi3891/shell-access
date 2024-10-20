@@ -20,7 +20,22 @@ if (task === undefined) {
 }
 
 task();
+/*
 
+https://raw.githubusercontent.com/szagi3891/shell-access/refs/heads/main/src/client/index.html
+https://raw.githubusercontent.com/szagi3891/shell-access/refs/heads/main/deno.json
+
+rm -Rf ./dist && deno run -A https://deno.land/x/packup@v0.2.6/cli.ts build --import-map=./deno.json ./src/client/index.html --dist-dir=./dist
+
+rm -Rf ./dist && deno run -A https://deno.land/x/packup@v0.2.6/cli.ts build --import-map=https://raw.githubusercontent.com/szagi3891/shell-access/refs/heads/main/deno.json https://raw.githubusercontent.com/szagi3891/shell-access/refs/heads/main/src/client/index.html --dist-dir=./dist
+
+*/
+
+/*
+    trzeba odpalć proces bundlowania
+
+    trzeba wystartować serwer
+*/
 
 
 //TODO - spakowanie zawartości repozytorium git (bez historii i wrzucenie do pliku zip)

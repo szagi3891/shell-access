@@ -17,6 +17,8 @@ const main = () => {
         console.info('world');
     })();
 
+    //TODO - odpalenie połączenia socketowego do 127.0.0.1/ws --- jakiś port
+
     function App() {
         return (
             <div>
