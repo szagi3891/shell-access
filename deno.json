@@ -1,9 +1,10 @@
 {
-  "imports": {
-    "@reactive/utils": "jsr:@reactive/utils@^0.5.89"
-  },
-  "compilerOptions": {
-    "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": true
-  }
+    "imports": {
+        "@reactive/utils": "jsr:@reactive/utils@^0.5.89"
+    },
+    "compilerOptions": {
+        "noUncheckedIndexedAccess": true,
+        "noPropertyAccessFromIndexSignature": true
+    },
+    "task": "deno run -A https://deno.land/x/packup@v0.0.13/cli.ts build ./src/client/index.html"
 }
