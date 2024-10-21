@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { websocketToAsyncQuery } from "./lib/websocketToAsyncQuery.ts";
 import { Common } from "./Common.ts";
 import { ProcessListModel } from "./models/ProcessListModel.ts";
@@ -115,7 +114,7 @@ Deno.serve({
 /*
     dwa rodzaje zasobów
 
-    obserwowanie jakiegoś parametru serwera ...
+    obserwowanie jakiegoś parametru serwera ...
 
     odpalenie "taska" który będzie składał się z trzech procesów, potem obserwowanie stanu tego taska
 
