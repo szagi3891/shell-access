@@ -84,7 +84,7 @@ const handleSocketMessage = (common: Common, state: State, message: MessageBrows
 const common = new Common();
 
 Deno.serve({
-    hostname: '127.0.0.1',
+    hostname: '0.0.0.0',
     port: 9999,
     onListen: () => {
         console.info('Listening on ws://0.0.0.0:9999 ...');
