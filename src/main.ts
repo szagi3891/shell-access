@@ -91,7 +91,13 @@ Deno.serve({
     },
     handler: (req) => {
         if (req.headers.get("upgrade") != "websocket") {
-            return new Response(null, { status: 501 });
+            return new Response(
+                'Hello world',
+                {
+                    status: 200
+                }
+            );
+            // return new Response(null, { status: 501 });
         }
 
         const { socket, response } = Deno.upgradeWebSocket(req);
