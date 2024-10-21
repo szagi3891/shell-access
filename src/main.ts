@@ -90,7 +90,11 @@ Deno.serve({
         console.info('Listening on ws://0.0.0.0:9999 ...');
     },
     handler: (req) => {
-        if (req.headers.get("upgrade") != "websocket") {
+        const isUpgrade = req.headers.get("upgrade") === "websocket";
+
+        console.info(`REQUEST ${req.url} isUpgrade=${isUpgrade}`);
+
+        if (isUpgrade === false) {
             return new Response(
                 'Hello world',
                 {

@@ -38,8 +38,8 @@ export const websocketToAsyncQuery = <T>(socket: WebSocket, validator: z.ZodType
         query.close();
     });
 
-    socket.addEventListener('close', (cv) => {
-        console.info('close', cv);
+    socket.addEventListener('close', () => {
+        console.info('close');
         query.close();
     });
 
