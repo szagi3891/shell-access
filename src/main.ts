@@ -87,7 +87,7 @@ Deno.serve({
     hostname: '0.0.0.0',
     port: 9999,
     onListen: () => {
-        console.info('Listening on ws://0.0.0.0:9999 ...');
+        console.info('Listening on ws://0.0.0.0:9999 ... (2)');
     },
     handler: (req) => {
         const isUpgrade = req.headers.get("upgrade") === "websocket";
