@@ -24,77 +24,16 @@ interface PidRecordTypeV1 {
     comm: string,
 }
 
-const getOrCreate = (map: Map<string, PartialPidRecordTypeV1>, key: string): PartialPidRecordTypeV1 => {
-    const record = map.get(key);
+const getOrCreate = (map: Record<string, PartialPidRecordTypeV1>, key: string): PartialPidRecordTypeV1 => {
+    const record = map[key];
 
     if (record !== undefined) {
         return record;
     }
 
     const newRecord = {};
-    map.set(key, newRecord);
+    map[key] = newRecord;
     return newRecord;
-};
-
-export const processListV1 = async (): Promise<Map<string, PidRecordTypeV1>> => {
-    const [output1, output2, output3] = await Promise.all([
-        execPs('pid,ppid,%mem,%cpu'),
-        execPs('pid,args'),
-        execPs('pid,comm')
-    ]);
-
-    const pid = output1.get().getLinesAndTrim();
-    const ppid = output1.get().getLinesAndTrim();
-    const mem = output1.get().getLinesAndTrim();
-    const cpu = output1.getLinesAndTrim();
-
-    const output2Pid = output2.get().getLinesAndTrim();
-    const output2Args = output2.getLinesAndTrim();
-
-    const output3Pid = output3.get().getLinesAndTrim();
-    const output3Comm = output3.getLinesAndTrim();
-
-    const result: Map<string, PartialPidRecordTypeV1> = new Map();
-
-    for (const [index, pidId] of pid.entries()) {
-        const resultRecord = getOrCreate(result, pidId);
-
-        resultRecord.ppid = ppid[index] ?? throwError('oczekiwano wartości');
-        resultRecord.mem = mem[index] ?? throwError('oczekiwano wartości');
-        resultRecord.cpu = cpu[index] ?? throwError('oczekiwano wartości');
-    }
-
-    for (const [index, pidId] of output2Pid.entries()) {
-        const resultRecord = getOrCreate(result, pidId);
-
-        resultRecord.args = output2Args[index] ?? throwError('oczekiwano wartości');
-    }
-
-    for (const [index, pidId] of output3Pid.entries()) {
-        const resultRecord = getOrCreate(result, pidId);
-
-        resultRecord.comm = output3Comm[index] ?? throwError('oczekiwano wartości');
-    }
-    
-    const resultOut: Map<string, PidRecordTypeV1> = new Map();
-
-    for (const [key, value] of result) {
-        if (value.ppid !== undefined && value.mem !== undefined && value.cpu !== undefined && value.args !== undefined && value.comm !== undefined) {
-            const record: PidRecordTypeV1= {
-                ppid: value.ppid,
-                mem: value.mem,
-                cpu: value.cpu,
-                args: value.args,
-                comm: value.comm,
-            };
-
-            resultOut.set(key, record);
-        } else {
-            console.error('Niekompletny rekord', value);
-        }
-    }
-
-    return resultOut;
 };
 
 export const PidRecordZod = z.object({
@@ -104,7 +43,7 @@ export const PidRecordZod = z.object({
     args: z.string(),
 });
 
-type PidRecordType = z.TypeOf<typeof PidRecordZod>;
+export type PidRecordType = z.TypeOf<typeof PidRecordZod>;
 // interface PidRecordType {
 //     ppid: string,
 //     mem: string,
@@ -112,7 +51,7 @@ type PidRecordType = z.TypeOf<typeof PidRecordZod>;
 //     args: string,
 // }
 
-export const processList = async (): Promise<Map<string, PidRecordType>> => {
+export const processList = async (): Promise<Record<string, PidRecordType>> => {
     const output = await execPs('pid,ppid,%mem,%cpu,args');
 
     const pid = output.get().getLinesAndTrim();
@@ -121,7 +60,7 @@ export const processList = async (): Promise<Map<string, PidRecordType>> => {
     const cpu = output.getLinesAndTrim();
     const args = output.getLinesAndTrim();
 
-    const result: Map<string, PidRecordType> = new Map();
+    const result: Record<string, PidRecordType> = {};
 
     for (const [index, pidId] of pid.entries()) {
         const resultRecord = getOrCreate(result, pidId);

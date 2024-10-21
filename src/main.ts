@@ -1,85 +1,88 @@
 import { z } from 'zod';
-import { PidRecordZod } from "./api/processList/processList.ts";
-import { assertNever, AsyncQuery, jsonParse } from "@reactive/utils";
+import { websocketToAsyncQuery } from "./lib/websocketToAsyncQuery.ts";
+import { Common } from "./Common.ts";
+import { ProcessListModel } from "./models/ProcessListModel.ts";
+import { autorun, IReactionDisposer } from "mobx";
+import { assertNever } from "@reactive/utils";
+import { MessageBrowserZod, type MessageBrowserType, type MessageServerType } from "./message.ts";
 
-
-const MessageBrowserZod = z.union([
-    z.object({
-        type: z.literal('process-list'),
-        id: z.number(), //request id 
-    }),
-    z.object({
-        type: z.literal('unsubscribe'),
-        id: z.number(), //request id
-    }),
-]);
-
-type MessageBrowserType = z.TypeOf<typeof MessageBrowserZod>;
-
-const MessageServerZod = z.union([
-    z.object({
-        type: z.literal('process-list'),
-        response: z.record(
-            z.string(),
-            PidRecordZod
-        ),
-    }),
-    z.string(),
-]);
 
 class State {
-    //...
-}
+    private readonly subscription: Map<number, IReactionDisposer>;
 
-const handleWs = (socket: WebSocket): AsyncQuery<MessageBrowserType> => {
-    const query = new AsyncQuery();
+    constructor(private readonly socket: WebSocket) {
+        this.subscription = new Map();
+    }
 
-    const timer = setTimeout(() => {
-        query.close();
-    }, 10_000);
+    send(message: MessageServerType) {
+        this.socket.send(JSON.stringify(message, null, 4));
+    }
 
-    socket.addEventListener("open", () => {
-        console.log("a client connected!");
-        clearTimeout(timer);
-    });
+    sendError(message: string) {
+        this.send({
+            type: 'error-message',
+            message
+        });
+    }
 
-    socket.addEventListener("message", (event) => {
-        if (typeof event.data === 'string') {
-            const result = jsonParse(event.data, MessageBrowserZod);
+    register(id: number, dispose: IReactionDisposer) {
+        const oldDispose = this.subscription.get(id);
 
-            if (result.type === 'ok') {
-                query.push(result.value);
-                return;
-            }
-
-            if (result.type === 'error') {
-                socket.send(JSON.stringify({
-                    'type': '',
-                    message: result.error
-                }));
-                query.close();
-                return;
-            }
-
-            assertNever(result);
+        if (oldDispose !== undefined) {
+            this.sendError(`Zduplikowany id=${id}, starą subskrybcję anuluję`);
+            oldDispose();
         }
 
-        console.info('coś dziwnego dotarło', event.data);
-        query.close();
-    });
+        this.subscription.set(id, dispose);
+    }
 
-    socket.addEventListener('close', (cv) => {
-        console.info('close', cv);
-        query.close();
-    });
+    unregister(id: number) {
+        const dispose = this.subscription.get(id);
+        this.subscription.delete(id);
 
-    socket.addEventListener('error', error => {
-        console.info('error', error);
-        query.close();
-    });
+        if (dispose === undefined) {
+            this.sendError(`Nie można odsubskrybować, brakuje id=${id}`);
+            return;
+        }
 
-    return query;
+        dispose();
+    }
+
+    disposeAll() {
+        for (const dispose of this.subscription.values()) {
+            dispose();
+        }
+    }
+}
+
+const handleSocketMessage = (common: Common, state: State, message: MessageBrowserType): void => {
+    if (message.type === 'process-list') {
+        const id = message.id;
+
+        const dispose = autorun(() => {
+            const data = ProcessListModel.get(common).data;
+
+            if (data.type === 'ready') {
+                state.send({
+                    type: 'process-list',
+                    response: data.value
+                });
+            }
+        });
+
+        state.register(id, dispose);
+        return;
+    }
+
+    if (message.type === 'unsubscribe') {
+        state.unregister(message.id);
+        return;
+    }
+
+    assertNever(message);
 };
+
+const common = new Common();
 
 Deno.serve({
     hostname: '127.0.0.1',
@@ -95,15 +98,14 @@ Deno.serve({
         const { socket, response } = Deno.upgradeWebSocket(req);
 
         (async () => {
-            const state = new State();
 
-            for await (const message of handleWs(socket)) {
-                //...
+            const state = new State(socket);
 
-                console.info('Wiadomość do obsłużenia', message);
+            for await (const message of websocketToAsyncQuery(socket, MessageBrowserZod)) {
+                handleSocketMessage(common, state, message);
             }
 
-            //czyszczenie subskrybcji
+            state.disposeAll();
         })();
 
         return response;

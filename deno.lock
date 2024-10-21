@@ -1,7 +1,8 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@reactive/utils@~0.5.89": "0.5.89",
+    "jsr:@reactive/utils@~0.5.90": "0.5.90",
+    "jsr:@reactive/utils@~0.5.91": "0.5.91",
     "jsr:@std/assert@^1.0.6": "1.0.6",
     "jsr:@std/expect@*": "1.0.5",
     "jsr:@std/internal@^1.0.4": "1.0.4",
@@ -11,16 +12,26 @@
     "npm:@types/node@*": "18.16.19",
     "npm:express@4.18.2": "4.18.2",
     "npm:mobx@^6.13.2": "6.13.4",
+    "npm:mobx@^6.13.5": "6.13.5",
     "npm:unws@*": "0.2.4_ws@8.18.0",
     "npm:zod@*": "3.23.8",
     "npm:zod@^3.23.8": "3.23.8"
   },
   "jsr": {
-    "@reactive/utils@0.5.89": {
-      "integrity": "eeb6d4fca408a5e99df65e1bf3b768e5244ebc89856cfe4c84b705d40d261ebf",
+    "@reactive/utils@0.5.90": {
+      "integrity": "42abb56fed83628bc478be0b91e1a9ada656607a3442d8f9f0019822d7641500",
       "dependencies": [
         "npm:@js-temporal/polyfill",
-        "npm:mobx",
+        "npm:mobx@^6.13.2",
+        "npm:unws",
+        "npm:zod@*"
+      ]
+    },
+    "@reactive/utils@0.5.91": {
+      "integrity": "643454ced90b3fe5256170e39d248afed72b55753c83b2b789e6546f8fe5ea7f",
+      "dependencies": [
+        "npm:@js-temporal/polyfill",
+        "npm:mobx@^6.13.2",
         "npm:unws",
         "npm:zod@*"
       ]
@@ -347,6 +358,9 @@
     "mobx@6.13.4": {
       "integrity": "sha512-jPIeHnOw1zZNBEmpO6Ls5MvowWbpe460I0nShOarK7WJRpSwRFKzY77rHf4VhNe/eiCIEfKp+UdJa6jqDtTnaQ=="
     },
+    "mobx@6.13.5": {
+      "integrity": "sha512-/HTWzW2s8J1Gqt+WmUj5Y0mddZk+LInejADc79NJadrWla3rHzmRHki/mnEUH1AvOmbNTZ1BRbKxr8DSgfdjMA=="
+    },
     "ms@2.0.0": {
       "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="
     },
@@ -538,7 +552,8 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@reactive/utils@~0.5.89",
+      "jsr:@reactive/utils@~0.5.91",
+      "npm:mobx@^6.13.5",
       "npm:zod@^3.23.8"
     ]
   }
