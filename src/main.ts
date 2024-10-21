@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { PidRecordZod } from "./api/processList/processList.ts";
+import { assertNever, AsyncQuery, jsonParse } from "@reactive/utils";
 
 
 const MessageBrowserZod = z.union([
@@ -12,6 +13,8 @@ const MessageBrowserZod = z.union([
         id: z.number(), //request id
     }),
 ]);
+
+type MessageBrowserType = z.TypeOf<typeof MessageBrowserZod>;
 
 const MessageServerZod = z.union([
     z.object({
@@ -28,6 +31,56 @@ class State {
     //...
 }
 
+const handleWs = (socket: WebSocket): AsyncQuery<MessageBrowserType> => {
+    const query = new AsyncQuery();
+
+    const timer = setTimeout(() => {
+        query.close();
+    }, 10_000);
+
+    socket.addEventListener("open", () => {
+        console.log("a client connected!");
+        clearTimeout(timer);
+    });
+
+    socket.addEventListener("message", (event) => {
+        if (typeof event.data === 'string') {
+            const result = jsonParse(event.data, MessageBrowserZod);
+
+            if (result.type === 'ok') {
+                query.push(result.value);
+                return;
+            }
+
+            if (result.type === 'error') {
+                socket.send(JSON.stringify({
+                    'type': '',
+                    message: result.error
+                }));
+                query.close();
+                return;
+            }
+
+            assertNever(result);
+        }
+
+        console.info('coś dziwnego dotarło', event.data);
+        query.close();
+    });
+
+    socket.addEventListener('close', (cv) => {
+        console.info('close', cv);
+        query.close();
+    });
+
+    socket.addEventListener('error', error => {
+        console.info('error', error);
+        query.close();
+    });
+
+    return query;
+};
+
 Deno.serve({
     hostname: '127.0.0.1',
     port: 9999,
@@ -41,28 +94,17 @@ Deno.serve({
 
         const { socket, response } = Deno.upgradeWebSocket(req);
 
-        const state = new State();
+        (async () => {
+            const state = new State();
 
-        socket.addEventListener("open", () => {
-            console.log("a client connected!");
-        });
+            for await (const message of handleWs(socket)) {
+                //...
 
-        socket.addEventListener("message", (event) => {
-            if (event.data === "ping") {
-                socket.send("pong");
-                return;
+                console.info('Wiadomość do obsłużenia', message);
             }
 
-            console.info('coś dziwnego dotarło', event.data);
-        });
-
-        socket.addEventListener('close', (cv) => {
-            console.info('close', cv);
-        });
-
-        socket.addEventListener('error', error => {
-            console.info('error', error);
-        });
+            //czyszczenie subskrybcji
+        })();
 
         return response;
     }
