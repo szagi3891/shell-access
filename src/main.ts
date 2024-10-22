@@ -2,7 +2,7 @@ import { startWebsocketApi } from "./lib-socket/server.ts";
 import { PidRecordZod } from "./api/processList/processList.ts";
 import { z } from 'zod';
 import { autorun } from "mobx";
-import { assertNever } from "@reactive/utils";
+import { assertNever, Value } from "@reactive/utils";
 import { ProcessListModel } from "./models/ProcessListModel.ts";
 import { Common } from "./Common.ts";
 
@@ -16,11 +16,11 @@ const aaaZod = {
             PidRecordZod
         )
     },
-    'aaa': {
+    'current-time': {
         resourceId: z.object({
-            type: z.literal('aaa'),
+            type: z.literal('current-time'),
         }),
-        resp: z.array(z.number()),
+        resp: z.string(),
     }
 };
 
@@ -38,7 +38,46 @@ const aaaZod = {
         "type": "unsubscribe",
         "id": 3
     }
+
+    //odpowiedzi
+
+    z.object({
+        type: z.literal('data'),
+        id: z.number(),
+        data: z.unknown(),            //dane dotyczące tego konkretnego modelu
+    }),
+    z.object({
+        type: z.literal('error-message'),
+        message: z.string(),
+    })
+
+
+    {
+        "type": "subscribe",
+        "id": 5,
+        "resource": {
+            "type": "current-time"
+        }
+    }
 */
+
+const getCurrentTime = () => new Date().toString();
+
+const currentTime = new Value<string>(getCurrentTime(), (setValue) => {
+
+    setValue(getCurrentTime());
+    console.info('start timer');
+
+    const timer = setInterval(() => {
+        setValue(getCurrentTime());
+    }, 2000);
+
+    return () => {
+        console.info('stop timer');
+
+        clearInterval(timer);
+    };
+});
 
 const common = new Common();
 
@@ -61,24 +100,12 @@ startWebsocketApi('0.0.0.0', 9999, aaaZod, (message) => {
             //         'args': ''
             //     }
             // });
-
-            return () => {
-                //potencjalne odłączanie czegoś mozna tutaj podpiąć
-            };
         });
     }
 
-    if (message.type === 'aaa') {
+    if (message.type === 'current-time') {
         return autorun(() => {
-
-            //TODO - subskrybcja na zewnętrzne źródło danych
-
-            message.response([99, 0]);
-
-
-            return () => {
-
-            };
+            message.response(currentTime.getValue());
         });
     }
 
