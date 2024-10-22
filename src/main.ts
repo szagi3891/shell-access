@@ -24,6 +24,22 @@ const aaaZod = {
     }
 };
 
+/*
+
+    {
+        "type": "subscribe",
+        "id": 3,
+        "resource": {
+            "type": "process-list"
+        }
+    }
+
+    {
+        "type": "unsubscribe",
+        "id": 3
+    }
+*/
+
 const common = new Common();
 
 startWebsocketApi('0.0.0.0', 9999, aaaZod, (message) => {

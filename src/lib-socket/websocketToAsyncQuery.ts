@@ -27,7 +27,6 @@ export const websocketToAsyncQuery = <T>(socket: WebSocket, validator: z.ZodType
                     'type': '',
                     message: result.error
                 }));
-                query.close();
                 return;
             }
 
@@ -35,7 +34,6 @@ export const websocketToAsyncQuery = <T>(socket: WebSocket, validator: z.ZodType
         }
 
         console.info('coś dziwnego dotarło', event.data);
-        query.close();
     });
 
     socket.addEventListener('close', () => {

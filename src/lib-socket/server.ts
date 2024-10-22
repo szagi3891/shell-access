@@ -2,7 +2,6 @@ import { IReactionDisposer } from "mobx";
 import { MessageBrowserZod, type MessageBrowserType, type MessageServerType } from "./message.ts";
 import { assertNever } from "@reactive/utils";
 import { websocketToAsyncQuery } from "./websocketToAsyncQuery.ts";
-import { z } from 'zod';
 import type { CreateSubscriptionData, SubscriptionRouter } from "./type.ts";
 
 class State {
@@ -71,12 +70,11 @@ const handleSocketMessage = <SR extends SubscriptionRouter>(
                     type: prefix,
                     resourceId: resourceId,
                     response: (response) => {
-    
-                        //TODO - to wysyłamy do przeglądarki,
-                        //trzeba mieć referencję do socketa, oraz id subskrybcji
-                        //...
-
-
+                        state.send({
+                            type: 'data',
+                            id: message.id,
+                            data: response
+                        });
                     }
                 });
     
