@@ -3,6 +3,7 @@ import { MessageBrowserZod, type MessageBrowserType, type MessageServerType } fr
 import { assertNever } from "@reactive/utils";
 import { websocketToAsyncQuery } from "./websocketToAsyncQuery.ts";
 import { z } from 'zod';
+import type { CreateSubscriptionData, SubscriptionRouter } from "./type.ts";
 
 class State {
     private readonly subscription: Map<number, IReactionDisposer>;
@@ -52,28 +53,43 @@ class State {
     }
 }
 
-const handleSocketMessage = <M>(
+const handleSocketMessage = <SR extends SubscriptionRouter>(
     state: State,
     message: MessageBrowserType,
-    subscribeType: z.ZodType<M>,
-    subscribe: (data: M) => IReactionDisposer,
+    subscriptionRouter: SR,
+    createSubsciption: (data: CreateSubscriptionData<SR>) => IReactionDisposer,
 ): void => {
     if (message.type === 'subscribe') {
 
-        const dataRaw = message.resource;
+        const resourceId = message.resource;
 
-        const data = subscribeType.safeParse(dataRaw);
+        for (const [prefix, { resourceId: resourceIdValidator }] of Object.entries(subscriptionRouter)) {
+            const safeData = resourceIdValidator.safeParse(resourceId);
+    
+            if (safeData.success) {
+                const dispose = createSubsciption({
+                    type: prefix,
+                    resourceId: resourceId,
+                    response: (response) => {
+    
+                        //TODO - to wysyłamy do przeglądarki,
+                        //trzeba mieć referencję do socketa, oraz id subskrybcji
+                        //...
 
-        if (data.success) {
-            const dispose = subscribe(data.data);
-            state.register(message.id, dispose);
-            return;
+
+                    }
+                });
+    
+                // return dispose;
+                state.register(message.id, dispose);
+                return;
+            }
         }
 
         state.sendError(JSON.stringify({
-            message: 'Problem ze zdekodowaniem',
-            resource: dataRaw,
-            zod: data.error.toString()
+            message: 'Problem ze zdekodowaniem wiadomości subscribe',
+            resource: resourceId,
+            id: message.id,
         }));
         return;
     }
@@ -86,11 +102,12 @@ const handleSocketMessage = <M>(
     assertNever(message);
 };
 
-export const startWebsocketApi = <M>(
+export const startWebsocketApi = <SR extends SubscriptionRouter>(
     host: string,
     port: number,
-    subscribeType: z.ZodType<M>,
-    subscribe: (data: M) => IReactionDisposer,
+    subscriptionRouter: SR,
+    createSubsciption: (data: CreateSubscriptionData<SR>) => IReactionDisposer,
+
 ) => {
 
     Deno.serve({
@@ -121,7 +138,7 @@ export const startWebsocketApi = <M>(
                 const state = new State(socket);
 
                 for await (const message of websocketToAsyncQuery(socket, MessageBrowserZod)) {
-                    handleSocketMessage(state, message, subscribeType, subscribe);
+                    handleSocketMessage(state, message, subscriptionRouter, createSubsciption);
                 }
 
                 state.disposeAll();
