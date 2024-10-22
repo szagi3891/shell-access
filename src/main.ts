@@ -92,22 +92,40 @@ const startWebsocketApi2 = <T extends Record<string, { req: z.ZodType<unknown>, 
 startWebsocketApi2(aaaZod, (message) => {
 
     if (message.type === 'process-list') {
-        // message.params
-        // message.response('aa');
-        message.response({
-            'a': {
-                'ppid': '',
-                'mem': 'd',
-                'cpu': '',
-                'args': ''
-            }
+
+        return autorun(() => {
+
+            //subskrybcja na zewnętrzne źródło danych
+            // message.params
+            // message.response('aa');
+
+            message.response({
+                'a': {
+                    'ppid': '',
+                    'mem': 'd',
+                    'cpu': '',
+                    'args': ''
+                }
+            });
+
+            return () => {
+
+            };
         });
-        return autorun(() => {});
     }
 
     if (message.type === 'aaa') {
-        message.response([99, 0]);
-        return autorun(() => {});
+        return autorun(() => {
+
+            //TODO - subskrybcja na zewnętrzne źródło danych
+
+            message.response([99, 0]);
+
+
+            return () => {
+
+            };
+        });
     }
 
     return assertNever(message);
