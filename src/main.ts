@@ -6,7 +6,7 @@ import { assertNever, Value } from "@reactive/utils";
 import { ProcessListModel } from "./models/ProcessListModel.ts";
 import { Common } from "./Common.ts";
 
-const aaaZod = {
+const SocketRouterZod = {
     'process-list': {
         resourceId: z.object({
             type: z.literal('process-list'),
@@ -81,7 +81,7 @@ const currentTime = new Value<string>(getCurrentTime(), (setValue) => {
 
 const common = new Common();
 
-startWebsocketApi('0.0.0.0', 9999, aaaZod, (message) => {
+startWebsocketApi('0.0.0.0', 9999, SocketRouterZod, (message) => {
 
     if (message.type === 'process-list') {
 
