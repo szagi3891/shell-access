@@ -3,6 +3,7 @@ import { PidRecordZod } from "./api/processList/processList.ts";
 import { z } from 'zod';
 import { autorun, type IReactionDisposer } from "mobx";
 import { assertNever } from "@reactive/utils";
+import type { CreateSubscriptionData, SubscriptionRouter } from "./lib-socket/type.ts";
 
 const DataIdZod = z.object({
     type: z.literal('process-list'),
@@ -10,16 +11,9 @@ const DataIdZod = z.object({
 
 type DataIdType = z.TypeOf<typeof DataIdZod>;
 
-const DataResponseZod = z.object({
-    response: z.record(
-        z.string(),
-        PidRecordZod
-    ),
-});
-
 const aaaZod = {
     'process-list': {
-        req: z.object({
+        resourceId: z.object({
             type: z.literal('process-list'),
         }),
         resp: z.record(
@@ -28,7 +22,7 @@ const aaaZod = {
         )
     },
     'aaa': {
-        req: z.object({
+        resourceId: z.object({
             type: z.literal('aaa'),
         }),
         resp: z.array(z.number()),
@@ -46,39 +40,28 @@ type RouterState<T extends Record<string, { req: z.ZodType<unknown>, resp: z.Zod
 }[keyof T];
 */
 
-type CreateSubscription<T extends Record<string, { req: z.ZodType<unknown>, resp: z.ZodType<unknown>}>> = {
-    [K in keyof T]: {
-        type: K;
-        params: z.infer<T[K]['req']>;
-        response: (response: T[K]['resp'] extends z.ZodType<infer P> ? P : never) => void;
-    }
-}[keyof T];
 
-type AAA = CreateSubscription<typeof aaaZod>;
+type AAA = CreateSubscriptionData<typeof aaaZod>;
 
-const startWebsocketApi2 = <T extends Record<string, { req: z.ZodType<unknown>, resp: z.ZodType<unknown>}>>(
+//const subscribeTo = 
+
+const startWebsocketApi2 = <T extends SubscriptionRouter>(
     validators: T,
-    // data: unknown,
-    createSubsciption: (data: CreateSubscription<T>) => IReactionDisposer,
+    resourceId: unknown, //subskrybcyjne dane z socketa
+    createSubsciption: (data: CreateSubscriptionData<T>) => IReactionDisposer,
 ): IReactionDisposer => {
-    //...
-
-    //dane które przychodzą z socketa
-
-    const data = 3;
-
-    for (const [prefix, { req, resp }] of Object.entries(validators)) {
-        // const 
-
-        const safeData = req.safeParse(data);
+    for (const [prefix, { resourceId: resourceIdValidator }] of Object.entries(validators)) {
+        const safeData = resourceIdValidator.safeParse(resourceId);
 
         if (safeData.success) {
             const dispose = createSubsciption({
                 type: prefix,
-                params: data,
+                resourceId: resourceId,
                 response: (response) => {
 
                     //TODO - to wysyłamy do przeglądarki,
+                    //trzeba mieć referencję do socketa, oraz id subskrybcji
+                    //...
                 }
             });
 
@@ -89,7 +72,7 @@ const startWebsocketApi2 = <T extends Record<string, { req: z.ZodType<unknown>, 
     throw Error('aaa');
 };
 
-startWebsocketApi2(aaaZod, (message) => {
+startWebsocketApi2(aaaZod, 'ddd', (message) => {
 
     if (message.type === 'process-list') {
 
