@@ -1,0 +1,134 @@
+import { IReactionDisposer } from "mobx";
+import { MessageBrowserZod, type MessageBrowserType, type MessageServerType } from "./message.ts";
+import { assertNever } from "@reactive/utils";
+import { websocketToAsyncQuery } from "./websocketToAsyncQuery.ts";
+import { z } from 'zod';
+
+class State {
+    private readonly subscription: Map<number, IReactionDisposer>;
+
+    constructor(private readonly socket: WebSocket) {
+        this.subscription = new Map();
+    }
+
+    send(message: MessageServerType) {
+        this.socket.send(JSON.stringify(message, null, 4));
+    }
+
+    sendError(message: string) {
+        this.send({
+            type: 'error-message',
+            message
+        });
+    }
+
+    register(id: number, dispose: IReactionDisposer) {
+        const oldDispose = this.subscription.get(id);
+
+        if (oldDispose !== undefined) {
+            this.sendError(`Zduplikowany id=${id}, starą subskrybcję anuluję`);
+            oldDispose();
+        }
+
+        this.subscription.set(id, dispose);
+    }
+
+    unregister(id: number) {
+        const dispose = this.subscription.get(id);
+        this.subscription.delete(id);
+
+        if (dispose === undefined) {
+            this.sendError(`Nie można odsubskrybować, brakuje id=${id}`);
+            return;
+        }
+
+        dispose();
+    }
+
+    disposeAll() {
+        for (const dispose of this.subscription.values()) {
+            dispose();
+        }
+    }
+}
+
+const handleSocketMessage = <M>(
+    state: State,
+    message: MessageBrowserType,
+    subscribeType: z.ZodType<M>,
+    subscribe: (data: M) => IReactionDisposer,
+): void => {
+    if (message.type === 'subscribe') {
+
+        const dataRaw = message.resource;
+
+        const data = subscribeType.safeParse(dataRaw);
+
+        if (data.success) {
+            const dispose = subscribe(data.data);
+            state.register(message.id, dispose);
+            return;
+        }
+
+        state.sendError(JSON.stringify({
+            message: 'Problem ze zdekodowaniem',
+            resource: dataRaw,
+            zod: data.error.toString()
+        }));
+        return;
+    }
+
+    if (message.type === 'unsubscribe') {
+        state.unregister(message.id);
+        return;
+    }
+
+    assertNever(message);
+};
+
+export const startWebsocketApi = <M>(
+    host: string,
+    port: number,
+    subscribeType: z.ZodType<M>,
+    subscribe: (data: M) => IReactionDisposer,
+) => {
+
+    Deno.serve({
+        hostname: '0.0.0.0',
+        port: 9999,
+        onListen: () => {
+            console.info(`Listening on ws://${host}:${port} ... (3)`);
+        },
+        handler: (req) => {
+            const isUpgrade = req.headers.get("upgrade") === "websocket";
+
+            console.info(`REQUEST ${req.url} isUpgrade=${isUpgrade}`);
+
+            if (isUpgrade === false) {
+                return new Response(
+                    'Hello world',
+                    {
+                        status: 200
+                    }
+                );
+                // return new Response(null, { status: 501 });
+            }
+
+            const { socket, response } = Deno.upgradeWebSocket(req);
+
+            (async () => {
+
+                const state = new State(socket);
+
+                for await (const message of websocketToAsyncQuery(socket, MessageBrowserZod)) {
+                    handleSocketMessage(state, message, subscribeType, subscribe);
+                }
+
+                state.disposeAll();
+            })();
+
+            return response;
+        }
+    });
+};
+

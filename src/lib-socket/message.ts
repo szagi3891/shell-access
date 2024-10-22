@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { PidRecordZod } from "./api/processList/processList.ts";
 
 export const MessageBrowserZod = z.union([
     z.object({
-        type: z.literal('process-list'),
-        id: z.number(), //request id 
+        type: z.literal('subscribe'),
+        id: z.number(), //request id
+        resource: z.unknown(),
     }),
     z.object({
         type: z.literal('unsubscribe'),
@@ -16,11 +16,9 @@ export type MessageBrowserType = z.TypeOf<typeof MessageBrowserZod>;
 
 export const MessageServerZod = z.union([
     z.object({
-        type: z.literal('process-list'),
-        response: z.record(
-            z.string(),
-            PidRecordZod
-        ),
+        type: z.literal('data'),
+        id: z.number(),
+        data: z.unknown(),            //dane dotyczące tego konkretnego modelu
     }),
     z.object({
         type: z.literal('error-message'),
