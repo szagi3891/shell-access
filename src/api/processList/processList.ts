@@ -57,7 +57,7 @@ export const processList = async (): Promise<Record<string, PidRecordType>> => {
     const pid = output.get().getLinesAndTrim();
     const ppid = output.get().getLinesAndTrim();
     const mem = output.get().getLinesAndTrim();
-    const cpu = output.getLinesAndTrim();
+    const cpu = output.get().getLinesAndTrim();
     const args = output.getLinesAndTrim();
 
     const result: Record<string, PidRecordType> = {};

@@ -21,8 +21,22 @@ const SocketRouterZod = {
             type: z.literal('current-time'),
         }),
         resp: z.string(),
+    },
+    'user-data': {
+        resourceId: z.object({
+            type: z.literal('user-data'),
+            id: z.number(),
+        }),
+        resp: z.string(),
     }
 };
+
+//TODO - zasób, który będzie zwracał informację na temat wszystkich tasków
+/*
+    zasób1, zasób2, zasób3
+    jak zasób1 wystartuje, to można wystartować zasób2
+    jak dwójak wystartuje to wtedy dopiero można będzie wystartować zasób 3
+*/
 
 /*
 
@@ -38,6 +52,29 @@ const SocketRouterZod = {
         "type": "unsubscribe",
         "id": 3
     }
+
+
+    //inne podejście
+    {
+        "type": "subscribe",
+        "id": 3,
+        "resource": {
+            "process-list": {
+            }
+        }
+    }
+
+    {
+        "type": "subscribe",
+        "id": 3,
+        "resource": {
+            type: "process-list",
+            id: {
+                //specyficzne idki dla tego modelu
+            }
+        }
+    }
+
 
     //odpowiedzi
 
@@ -70,7 +107,7 @@ const currentTime = new Value<string>(getCurrentTime(), (setValue) => {
 
     const timer = setInterval(() => {
         setValue(getCurrentTime());
-    }, 2000);
+    }, 5000);
 
     return () => {
         console.info('stop timer');
@@ -107,6 +144,13 @@ startWebsocketApi('0.0.0.0', 9999, SocketRouterZod, (message) => {
         return autorun(() => {
             message.response(currentTime.getValue());
         });
+    }
+
+    if (message.type === 'user-data') {
+        return autorun(() => {
+
+            message.response(`userid=${message.resourceId.id} currentTime=${currentTime.getValue()}`);
+        })
     }
 
     return assertNever(message);

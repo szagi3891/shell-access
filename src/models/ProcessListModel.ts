@@ -17,7 +17,7 @@ export class ProcessListModel {
             (async () => {
                 while (active) {
                     await this.dataResource.refresh();
-                    await timeout(1000);
+                    await timeout(5000);
                 }
             })();
 
