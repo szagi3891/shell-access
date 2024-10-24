@@ -1,10 +1,15 @@
-import { throwError } from "@reactive/utils";
+import { throwError, timeout } from "@reactive/utils";
 import { commandOut } from "../../lib/command.ts";
 import { PsOutput } from "./psOutput.ts";
 import { z } from 'zod';
 
 const execPs = async (params: string): Promise<PsOutput> => {
-    const list = await commandOut('ps', ['-eo', params]); //args,
+    const list = await commandOut({
+        command: 'ps',
+        args: ['-eo', params],
+        show: false,
+    });
+
     return PsOutput.fromString(list);
 }
 
@@ -70,6 +75,8 @@ export const processList = async (): Promise<Record<string, PidRecordType>> => {
         resultRecord.cpu = cpu[index] ?? throwError('oczekiwano wartości');
         resultRecord.args = args[index] ?? throwError('oczekiwano wartości');
     }
+
+    await timeout(1000);
 
     return result;
 };

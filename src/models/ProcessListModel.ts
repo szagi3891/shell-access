@@ -1,6 +1,7 @@
-import { AutoWeakMap, Resource, ResourceResult, timeout } from "@reactive/utils";
+import { AutoWeakMap, timeout, Resource, ResourceResult } from "@reactive/utils";
 import type { Common } from "../Common.ts";
 import { processList, type PidRecordType } from "../api/processList/processList.ts";
+import { computed, makeObservable } from "mobx";
 
 
 export class ProcessListModel {
@@ -12,6 +13,7 @@ export class ProcessListModel {
     private constructor(_common: Common) {
         this.dataResource = Resource.browserAndServer<Record<string, PidRecordType>>(processList, () => {
 
+            console.info('ProcessListModel on');
             let active: boolean = true;
 
             (async () => {
@@ -22,9 +24,14 @@ export class ProcessListModel {
             })();
 
             return () => {
+                console.info('ProcessListModel off');
                 active = false;
             };
         });
+
+        makeObservable({
+            data: computed.struct
+        })
     }
 
     get data(): ResourceResult<Record<string, PidRecordType>> {

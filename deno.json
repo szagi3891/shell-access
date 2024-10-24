@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@reactive/utils": "jsr:@reactive/utils@^0.5.91",
+    "@reactive/utils": "jsr:@reactive/utils@^0.5.108",
     "mobx": "npm:mobx@^6.13.5",
     "zod": "npm:zod@^3.23.8"
   },

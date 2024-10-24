@@ -1,8 +1,8 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@reactive/utils@~0.5.108": "0.5.108",
     "jsr:@reactive/utils@~0.5.90": "0.5.90",
-    "jsr:@reactive/utils@~0.5.91": "0.5.91",
     "jsr:@std/assert@^1.0.6": "1.0.6",
     "jsr:@std/expect@*": "1.0.5",
     "jsr:@std/internal@^1.0.4": "1.0.4",
@@ -27,8 +27,8 @@
         "npm:zod@*"
       ]
     },
-    "@reactive/utils@0.5.91": {
-      "integrity": "643454ced90b3fe5256170e39d248afed72b55753c83b2b789e6546f8fe5ea7f",
+    "@reactive/utils@0.5.108": {
+      "integrity": "52c4c46d7953fdca9dd300371986ad4ebe9445cfb74350fa0b67d7aaaab03ffc",
       "dependencies": [
         "npm:@js-temporal/polyfill",
         "npm:mobx@^6.13.2",
@@ -552,7 +552,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@reactive/utils@~0.5.91",
+      "jsr:@reactive/utils@~0.5.108",
       "npm:mobx@^6.13.5",
       "npm:zod@^3.23.8"
     ]

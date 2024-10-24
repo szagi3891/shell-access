@@ -1,6 +1,16 @@
 
-export const commandOut = async (command: string, args: Array<string>): Promise<string> => {
-    console.info('COMMAND', JSON.stringify([command, ...args], null, 4));
+interface CommandParams {
+    command: string,
+    args: Array<string>,
+    show?: boolean,
+}
+
+export const commandOut = async (params: CommandParams): Promise<string> => {
+    const { command, args, show = true } = params;
+
+    if (show) {
+        console.info('COMMAND', JSON.stringify([command, ...args], null, 4));
+    }
 
     const out = new Deno.Command(command, {
         args,
@@ -22,8 +32,8 @@ export const commandOut = async (command: string, args: Array<string>): Promise<
     return textOut;
 };
 
-export const commandExec = async (command: string, args: Array<string>): Promise<void> => {
-    const result = await commandOut(command, args);
+export const commandExec = async (params: CommandParams): Promise<void> => {
+    const result = await commandOut(params);
 
     if (result.length > 0) {
         console.log(result);

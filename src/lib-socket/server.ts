@@ -1,4 +1,4 @@
-import { IReactionDisposer } from "mobx";
+import { autorun, IReactionDisposer } from "mobx";
 import { MessageBrowserZod, type MessageBrowserType, type MessageServerType } from "./message.ts";
 import { assertNever } from "@reactive/utils";
 import { websocketToAsyncQuery } from "./websocketToAsyncQuery.ts";
@@ -135,7 +135,7 @@ export const startWebsocketApi = <SR extends SubscriptionRouter>(
 
                 const state = new State(socket);
 
-                for await (const message of websocketToAsyncQuery(socket, MessageBrowserZod)) {
+                for await (const message of websocketToAsyncQuery(socket, MessageBrowserZod).subscribe()) {
                     handleSocketMessage(state, message, subscriptionRouter, createSubsciption);
                 }
 
